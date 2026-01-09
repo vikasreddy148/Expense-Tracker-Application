@@ -1,0 +1,202 @@
+### Expense Tracker API Testing
+### Use this file with IntelliJ HTTP Client
+
+@baseUrl = http://localhost:8080
+@token = 
+
+### ============================================
+### Authentication Endpoints
+### ============================================
+
+### 1. User Signup
+POST {{baseUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 2. User Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### 3. Get Current User
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### 4. Logout
+POST {{baseUrl}}/api/auth/logout
+Authorization: Bearer {{token}}
+
+### ============================================
+### Expense Endpoints
+### ============================================
+
+### 5. Add Expense
+POST {{baseUrl}}/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "Grocery shopping",
+  "category": "SURVIVAL_LIVELIHOOD",
+  "amount": 150.50,
+  "dateOfExpense": "2024-01-15"
+}
+
+### 6. Get All Expenses
+GET {{baseUrl}}/api/expenses
+Authorization: Bearer {{token}}
+
+### 7. Get Expense by ID
+GET {{baseUrl}}/api/expenses/1
+Authorization: Bearer {{token}}
+
+### 8. Update Expense
+PUT {{baseUrl}}/api/expenses/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "Updated grocery shopping",
+  "category": "SURVIVAL_LIVELIHOOD",
+  "amount": 175.00,
+  "dateOfExpense": "2024-01-15"
+}
+
+### 9. Delete Expense
+DELETE {{baseUrl}}/api/expenses/1
+Authorization: Bearer {{token}}
+
+### 10. Filter Expenses - By Category
+GET {{baseUrl}}/api/expenses/filter?category=PERSONAL
+Authorization: Bearer {{token}}
+
+### 11. Filter Expenses - By Date Range
+GET {{baseUrl}}/api/expenses/filter?startDate=2024-01-01&endDate=2024-01-31
+Authorization: Bearer {{token}}
+
+### 12. Filter Expenses - By Amount Range
+GET {{baseUrl}}/api/expenses/filter?minAmount=100&maxAmount=500
+Authorization: Bearer {{token}}
+
+### 13. Filter Expenses - Combined
+GET {{baseUrl}}/api/expenses/filter?category=PERSONAL&startDate=2024-01-01&endDate=2024-01-31&minAmount=10&maxAmount=1000
+Authorization: Bearer {{token}}
+
+### 14. Sort Expenses - By Amount Descending
+GET {{baseUrl}}/api/expenses/sort?sortBy=amount&order=desc
+Authorization: Bearer {{token}}
+
+### 15. Sort Expenses - By Date Ascending
+GET {{baseUrl}}/api/expenses/sort?sortBy=date&order=asc
+Authorization: Bearer {{token}}
+
+### 16. Sort Expenses - By Category
+GET {{baseUrl}}/api/expenses/sort?sortBy=category&order=asc
+Authorization: Bearer {{token}}
+
+### ============================================
+### Income Endpoints
+### ============================================
+
+### 17. Add Income
+POST {{baseUrl}}/api/incomes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "Monthly salary",
+  "source": "SALARY",
+  "amount": 5000.00,
+  "dateOfIncome": "2024-01-01"
+}
+
+### 18. Get All Incomes
+GET {{baseUrl}}/api/incomes
+Authorization: Bearer {{token}}
+
+### 19. Get Income by ID
+GET {{baseUrl}}/api/incomes/1
+Authorization: Bearer {{token}}
+
+### 20. Update Income
+PUT {{baseUrl}}/api/incomes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "Updated monthly salary",
+  "source": "SALARY",
+  "amount": 5500.00,
+  "dateOfIncome": "2024-01-01"
+}
+
+### 21. Delete Income
+DELETE {{baseUrl}}/api/incomes/1
+Authorization: Bearer {{token}}
+
+### 22. Filter Incomes - By Source
+GET {{baseUrl}}/api/incomes/filter?source=SALARY
+Authorization: Bearer {{token}}
+
+### 23. Filter Incomes - By Date Range
+GET {{baseUrl}}/api/incomes/filter?startDate=2024-01-01&endDate=2024-01-31
+Authorization: Bearer {{token}}
+
+### 24. Sort Incomes - By Amount Descending
+GET {{baseUrl}}/api/incomes/sort?sortBy=amount&order=desc
+Authorization: Bearer {{token}}
+
+### ============================================
+### Dashboard Endpoints
+### ============================================
+
+### 25. Get Total PnL
+GET {{baseUrl}}/api/dashboard/pnl
+Authorization: Bearer {{token}}
+
+### 26. Get PnL by Date Range
+GET {{baseUrl}}/api/dashboard/pnl/range?startDate=2024-01-01&endDate=2024-01-31
+Authorization: Bearer {{token}}
+
+### ============================================
+### OAuth2 Endpoints (Browser Required)
+### ============================================
+
+### 27. Google OAuth2 Login
+### Step 1: Open this URL in your browser:
+### http://localhost:8080/oauth2/authorization/google
+### Step 2: After login, you'll be redirected to:
+### http://localhost:8080/api/auth/oauth2/success?token=YOUR_TOKEN&username=...&email=...
+### Step 3: Copy the token and update @googleToken variable below
+
+@googleToken = YOUR_GOOGLE_TOKEN_HERE
+
+### Test with Google OAuth2 Token
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{googleToken}}
+
+### 28. GitHub OAuth2 Login
+### Step 1: Open this URL in your browser:
+### http://localhost:8080/oauth2/authorization/github
+### Step 2: After login, you'll be redirected to:
+### http://localhost:8080/api/auth/oauth2/success?token=YOUR_TOKEN&username=...&email=...
+### Step 3: Copy the token and update @githubToken variable below
+
+@githubToken = YOUR_GITHUB_TOKEN_HERE
+
+### Test with GitHub OAuth2 Token
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{githubToken}}
+
+### Test OAuth2 Success Endpoint (called automatically after OAuth2 login)
+GET {{baseUrl}}/api/auth/oauth2/success?token=test_token&username=testuser&email=test@example.com
+
