@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Expense-Tracker-Backend/ExpenseTracker
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/expensetracker?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - expense-tracker-network
+
+  frontend:
+    build: ./Expense-Tracker-Frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - expense-tracker-network
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: expensetracker
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - expense-tracker-network
+
+networks:
+  expense-tracker-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

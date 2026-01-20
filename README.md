@@ -228,7 +228,34 @@ npm run build
 # Serve the dist folder using a web server (nginx, Apache, etc.)
 ```
 
-## 📁 Project Structure
+## � Docker Support
+
+You can run the entire application stack (Frontend, Backend, and MySQL) using Docker Compose.
+
+### Quick Start with Docker
+
+1. **Build and Run Containers**
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **Access the Application**
+   - Frontend: `http://localhost:5173`
+   - Backend API: `http://localhost:8080`
+   - MySQL Database: `localhost:3307` (Mapped to prevent conflicts with local MySQL)
+
+3. **Stop Containers**
+   ```bash
+   docker-compose down
+   ```
+
+### Docker Hub Images
+
+The application images are available on Docker Hub:
+- Backend: `kathulavikasreddy/expense-tracker-backend:latest`
+- Frontend: `kathulavikasreddy/expense-tracker-frontend:latest`
+
+## �📁 Project Structure
 
 ### Backend Structure
 ```
