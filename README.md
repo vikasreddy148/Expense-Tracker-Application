@@ -255,6 +255,116 @@ The application images are available on Docker Hub:
 - Backend: `kathulavikasreddy/expense-tracker-backend:latest`
 - Frontend: `kathulavikasreddy/expense-tracker-frontend:latest`
 
+## ☸️ Kubernetes Deployment
+
+Deploy the application to a local Kubernetes cluster (like Minikube or Docker Desktop) or a cloud provider.
+
+### Deployment Architecture
+The application runs as a set of microservices on Kubernetes:
+- **Frontend**: A React application served via Nginx (running on port 5173).
+- **Backend**: A Spring Boot API (running on port 8080).
+- **Database**: MySQL running as a StatefulSet with persistent storage.
+
+### 📝 Kubernetes Manifests Breakdown
+
+The `k8s/` directory contains the following configuration files:
+
+- **[mysql.yaml](k8s/mysql.yaml)**:
+  - **StatefulSet**: Ensuring stable network identity and persistent storage.
+  - **Service**: Headless service for internal DNS resolution (`mysql-service`).
+  - **PersistentVolumeClaim**: Requests 1Gi storage for database persistence.
+
+- **[backend.yaml](k8s/backend.yaml)**:
+  - **Deployment**: Manages the Spring Boot application pods.
+  - **Service**: Exposes the API on port 8080.
+  - **Environment Variables**: Configures database connection (`SPRING_DATASOURCE_URL`) connecting to `mysql-service`.
+
+- **[frontend.yaml](k8s/frontend.yaml)**:
+  - **Deployment**: Manages the React frontend pods.
+  - **Service**: Exposes the UI on port 5173 (LoadBalancer).
+
+### 📋 Prerequisites
+
+Before deploying, ensure you have:
+1. **kubectl**: CLI tool for Kubernetes ([Installation Guide](https://kubernetes.io/docs/tasks/tools/)).
+2. **Kubernetes Cluster**:
+   - **Docker Desktop**: Enable Kubernetes in settings.
+   - **Minikube**: `minikube start`.
+   - **Cloud**: GKE, EKS, or AKS.
+
+### 🚀 Step-by-Step Deployment
+
+#### 1. Setup Namespace (Optional)
+It is good practice to isolate resources.
+```bash
+kubectl create namespace expense-tracker
+kubectl config set-context --current --namespace=expense-tracker
+```
+
+#### 2. Apply Manifests
+Deploy the database first to ensure it is ready for the backend.
+```bash
+# Apply all manifests in the k8s directory
+kubectl apply -f k8s/
+```
+
+#### 3. Verify Resources
+Check the status of your pods and services.
+```bash
+kubectl get pods
+# STATUS should be 'Running' for all pods
+
+kubectl get svc
+# Check EXTERNAL-IP (localhost for Docker Desktop)
+```
+
+### 🌐 Accessing the Application
+
+**Local Cluster (Docker Desktop/Minikube with Tunnel):**
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend API**: [http://localhost:8080/api](http://localhost:8080/api)
+
+*Note: If using Minikube, you might need `minikube service frontend-service` to get the URL.*
+
+### 🛠️ Configuration & Scaling
+
+#### Scaling Replicas
+Handle higher traffic by scaling the frontend or backend.
+```bash
+# Scale Frontend to 3 replicas
+kubectl scale deployment frontend --replicas=3
+
+# Scale Backend to 2 replicas
+kubectl scale deployment backend --replicas=2
+```
+
+#### Environment Variables
+To change database passwords or API configurations, edit the `env` section in `k8s/backend.yaml` or `k8s/mysql.yaml` and re-apply:
+```bash
+kubectl apply -f k8s/backend.yaml
+```
+
+### 🐛 Troubleshooting
+
+**1. Pods in `ImagePullBackOff`?**
+- Ensure the Docker image exists locally or in Docker Hub.
+- If using local images with Minikube, run `eval $(minikube docker-env)` before building.
+
+**2. Backend cannot connect to Database?**
+- Check logs: `kubectl logs -l app=backend`
+- Ensure `mysql-service` is running.
+- Verify `SPRING_DATASOURCE_URL` in `k8s/backend.yaml` matches the service name.
+
+**3. Application not accessible on localhost?**
+- If using Minikube, the LoadBalancer IP is not localhost. Run `minikube tunnel` in a separate terminal.
+
+### 🧹 Cleanup
+
+To remove all deployed resources:
+```bash
+kubectl delete -f k8s/
+```
+
 ## �📁 Project Structure
 
 ### Backend Structure
@@ -455,7 +565,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📞 Support
 
-For support, email [kathulavikasr@example.com] or open an issue in the repository.
+For support, email [kathulavikasr@gmail.com](mailto:kathulavikasr@gmail.com) or open an issue in the repository.
 
 ---
 
