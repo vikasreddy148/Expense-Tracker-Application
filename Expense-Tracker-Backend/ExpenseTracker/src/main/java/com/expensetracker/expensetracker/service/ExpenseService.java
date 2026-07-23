@@ -41,7 +41,7 @@ public class ExpenseService {
                 .dateOfExpense(request.getDateOfExpense())
                 .build();
 
-        expense = expenseRepository.save(expense);
+        expense = expenseRepository.saveAndFlush(expense);
         return mapToResponse(expense);
     }
 

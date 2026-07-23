@@ -65,7 +65,7 @@ public class AuthService implements UserDetailsService {
                 .roles(new HashSet<>(Set.of(Role.USER)))
                 .enabled(true)
                 .build();
-
+        User use = new User();
         user = userRepository.save(user);
 
         // Generate JWT token

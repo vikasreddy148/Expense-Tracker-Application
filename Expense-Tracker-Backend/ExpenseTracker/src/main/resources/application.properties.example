@@ -1,6 +1,7 @@
 # Application Configuration
 spring.application.name=ExpenseTracker
-server.port=8080
+# Use PORT from environment (e.g. Render) if set, otherwise 8080
+server.port=${PORT:8080}
 
 # Database Configuration (MySQL)
 # Update these values with your MySQL database credentials
